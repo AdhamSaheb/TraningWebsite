@@ -1,0 +1,22 @@
+{% extends 'myapp/base.html' %}
+{% block addsong %}"active"{% endblock %}
+{% block title %}Create an Account{% endblock %}
+{% block body %}
+
+
+    <h1> Create A new Account </h1>
+
+    <form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% include 'myapp/form-template.html' %}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-3">
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+
+        </div>
+
+    </form>
+
+{% endblock %}

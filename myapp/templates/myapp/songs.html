@@ -1,0 +1,33 @@
+{% extends 'myapp/base.html' %}
+{% block songs %}"active"{% endblock %}
+{% block title %}Song List{% endblock %}
+
+{% block body %}
+
+<div class="row">
+
+    {% for song in object_list %}
+
+
+
+          <div class="column">
+                          
+            <div class="card">
+
+                {% if song.isFavorite %}
+                    <img src="https://i.imgur.com/olM72b8.png" alt="star">
+                {% endif %}
+                <button class="btn"><i class="fa fa-exclamation"></i><a href="{% url 'myapp:song' song.id%}">  {{ song.name }}</a> </button>
+                <button class="btn"><i class="fa fa-trash"></i><a href="{% url 'myapp:DeleteSong' song.id%}">  Delete</a> </button>
+                <button class="btn"><i class="fa fa-edit"></i> <a href="{% url 'myapp:UpdateSong' song.id%}">  Edit </a></button>
+
+            </div>
+          </div>
+
+
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

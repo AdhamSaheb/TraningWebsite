@@ -1,0 +1,13 @@
+{% extends 'myapp/base.html' %}
+{% block songs %}"active"{% endblock %}
+{% block title %}Song Details{% endblock %}
+{% block body %}
+
+<h1>{{ song.name }}</h1> <br>
+<img src="{{ song.logo.url }}" class="img-responsive" >
+<h2>Number of Likes : </h2>
+{{ object.likes }}
+<h2>Album Name : </h2>
+{{ object.album}}
+
+{% endblock %}

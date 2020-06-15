@@ -1,0 +1,19 @@
+
+{% extends 'myapp/base.html' %}
+{% block home %}"active"{% endblock %}
+
+
+
+
+{% block title %}Home{% endblock %}
+{% block body %}
+    <body>
+    {% if user.is_authenticated %}
+    <h1> Hello, {{user.username}} </h1>
+    {% else %}
+    <h1> Hello,Guest </h1>
+    {% endif %}
+    <h1>This is the Index page </h1>
+    </body>
+
+{% endblock %}

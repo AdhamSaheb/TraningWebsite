@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Load static files -->
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    <!-- link to the CSS file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/style.css' %}">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    {#link to bootstrap#}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<body>
+        <!-- Navigation bar -->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavBar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img class="navbar-brand" src="{% static 'myapp/images/logo.svg' %}" alt="LOGO">
+            </div>
+
+            <div class="collapse navbar-collapse" id="topNavBar">
+                <ul class="nav navbar-nav">
+                    <li class= {% block home %}{% endblock %}>
+                        <a href="{% url 'myapp:index' %}">
+                            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
+                            Home
+                        </a>
+                    </li>
+                    <li class={% block songs %}{% endblock %}>
+                        <a href="{% url 'myapp:songs' %}">
+                            <span class="glyphicon glyphicon-music" aria-hidden="true"></span>&nbsp;
+                            Songs
+                        </a>
+                    </li>
+                    <li class={% block about %}{% endblock %}>
+                        <a href="{% url 'myapp:about' %}">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;
+                            About
+                        </a>
+                    </li>
+                    <li class={% block addsong %}{% endblock %} >
+                        <a href="{% url 'myapp:CreateSong' %}">
+                            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>&nbsp;
+                            Add Song
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li class="" >
+                            <a href="{% url 'myapp:logout' %}">
+                                <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;
+                                Logout
+                            </a>
+                        </li>
+
+                    {% else %}
+                    <li class="" >
+                        <a href="{% url 'myapp:register' %}">
+                            <span class="glyphicon glyphicon-registration-mark" aria-hidden="true"></span>&nbsp;
+                            Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- This is where Items of Menu Starts -->
+    </nav>
+    <!-- End of Navigation bar -->
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
