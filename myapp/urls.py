@@ -8,7 +8,8 @@ from .views import SongViewSet
 app_name= 'myapp'
 
 router = routers.DefaultRouter()
-router.register('songlist',views.SongViewSet,basename='Songlist')
+#the following is the viewset view used with class based Model viewset
+router.register('songlistviewset',views.SongViewSet,basename='Songlistviewset')
 
 
 urlpatterns = [
@@ -45,5 +46,19 @@ urlpatterns = [
 
     #this will redirect every url starting with api to the router
     #this will be related to all urls for the api testing
-    path('api/',include(router.urls))
+    path('api/',include(router.urls)),
+
+
+    #testing the function based api view for a list of objects
+    path('api/songlistgeneral/',views.song_list_general,name="Songlistgeneral"),
+
+    #testing the functin based api view for a single object
+    path('api/songdetail/'+"<int:pk>",views.song_detail,name="SongDetail"),
+
+
+    #testing class based API views
+    path('api/songlistapiview/',views.SongAPIView.as_view(),name='songlistapiview'),
+    #testing class based API views for detail
+    path('api/songdetailapiview/'+'<int:pk>',views.SongDetailAPIView.as_view(),name='songdetailapiview')
+
 ]

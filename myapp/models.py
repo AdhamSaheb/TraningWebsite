@@ -5,7 +5,7 @@ from django.urls import reverse
 class Song(models.Model):
     name = models.CharField(max_length=100)
     likes = models.IntegerField(default=0)
-    album = models.CharField(max_length=100,default='')
+    album = models.CharField(max_length=100,default='',null=False)
     isFavorite= models.BooleanField(default=False)
     logo= models.FileField(blank=True, null=True)
 
