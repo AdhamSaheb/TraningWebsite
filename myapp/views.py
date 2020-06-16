@@ -13,6 +13,7 @@ from django.utils.decorators import method_decorator
 
 
 
+
 def index(request):
     context_dect= {
         'songs': Song.objects.all(),
@@ -122,3 +123,23 @@ def logout_request(request):
     #messages.info(request, "Logged out successfully!")
     return redirect("myapp:index")
 
+
+
+
+
+
+#Everything down from here is related to the API created
+
+from rest_framework.decorators import api_view
+from rest_framework import viewsets
+from .serializers import SongSerializer
+
+
+# this class is general, it only allows you to get,post and put on the object
+#one more note is that you can call the url /pk as well to view a specific object
+class SongViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Songs to be viewed or edited.
+    """
+    queryset = Song.objects.all().order_by('likes') #
+    serializer_class = SongSerializer

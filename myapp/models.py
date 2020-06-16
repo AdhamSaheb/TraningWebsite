@@ -9,6 +9,7 @@ class Song(models.Model):
     isFavorite= models.BooleanField(default=False)
     logo= models.FileField(blank=True, null=True)
 
+
     def __str__(self):
         return self.name + '-' + self.album
 
