@@ -1,15 +1,14 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from myapp.models import Song
 # Create your views here.
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 from django.urls import reverse_lazy
-from django.contrib.auth import login, authenticate, logout
 from .forms import UserForm, LoginForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth import login, authenticate, logout
 
 
 def index(request):
@@ -57,6 +56,7 @@ class songs(ListView):
 
     def get_queryset(self):
         return Song.objects.all()
+from django.http import HttpResponse
 
 
 # to register a User
@@ -217,8 +217,9 @@ class SongAPIView(APIView):
 
 
 class SongDetailAPIView(APIView):
+
     """
-    Retrieve, update or delete a snippet instance.
+    Retrieve, update or delete a song instance.
     """
 
     def get_object(self, pk):
@@ -228,11 +229,11 @@ class SongDetailAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, pk, format=None):
-        # try:
-        #     song = Song.objects.get(pk=pk)
-        # except Song.DoesNotExist:
-        #     return Response(status=status.HTTP_404_NOT_FOUND)
-        song= self.get_object(pk)
+        try:
+            song = Song.objects.get(pk=pk)
+        except Song.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        #song = self.get_object(pk)
         serializer = SongSerializer(song)
         return Response(serializer.data)
 
@@ -250,6 +251,94 @@ class SongDetailAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
+#Now I will implement Mixin and generic class based API Views
+
+from rest_framework import mixins
+from rest_framework import generics
+
+
+
+#The base class provides the core functionality, and the mixin classes provide the .list() and .create() actions.
+# We're then explicitly binding the get and post methods to the appropriate actions.
+# This is where i will work on authentication as well, keep in mind its different for function based API views
+
+
+from rest_framework.authentication import SessionAuthentication,BasicAuthentication,TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+class SongListMixin(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    #these 2 lines are coming from the Generic API views
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+
+    #now I will define authentication classes, the view will go over all of them
+    #this view will not work unless youre signed in now
+    #Im using the 3 types of authentication
+    authentication_classes = [SessionAuthentication,BasicAuthentication,TokenAuthentication]
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+#Pretty similar. Again we're using the GenericAPIView class to provide the core functionality,
+# and adding in mixins to provide the .retrieve(), .update() and .destroy() actions.
+class SongDetailMixin(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    # these 2 lines are coming from the Generic API views
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+
+
+# Now I will implement Generic class based API Views, they extend Mixin and they do everything for you
+#Get,Post
+import django_filters.rest_framework
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db import models
+from rest_framework import filters
+class SongListGeneric(generics.ListCreateAPIView):
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+
+    #custom pagination class
+    # pagination_class = PageNumberPagination
+    #custom backend filters
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter)
+    #custom search and filter fields
+    filter_fields = [field.name for field in Song._meta.get_fields() if not isinstance(field,models.FileField)]
+    search_fields = [field.name for field in Song._meta.get_fields() ]
+    #only use if you need custom oredering fields
+    #order_fields = [field.name for field in Song._meta.get_fields() if not isinstance(field,models.FileField)]
+
+
+#Get,Put,Delete
+#Get,Put,Delete
+class SongDetailGeneric(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+
+
+
 # this class is general, it only allows you to get,post and put on the object(ViewSet class)
 # one more note is that you can call the url /pk as well to view a specific object
 # viewset will show the GUI of rest framework, the general one will only show you the data ( its an API view by default )
@@ -259,3 +348,39 @@ class SongViewSet(viewsets.ModelViewSet):
     """
     queryset = Song.objects.all().order_by('id')  #
     serializer_class = SongSerializer  # this and the other serializer also works
+
+
+
+
+# Now I will implement APIs for user creation  and login with token return
+
+from .serializers import UserRegisterSerializer,UserLoginSerializer
+
+class RegisterAPI(APIView):
+    def post(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # 201 is a created response
+            return Response(serializer.data, status=201)
+        # internal server error response
+        return Response(serializer.errors, status=400)
+
+class LoginAPI(APIView):
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data) # this basically means serialize the data that was sent
+
+        if serializer.is_valid():
+            #serializer.save()
+            # 201 is a created response
+
+            return Response(serializer.data, status=201)
+        # internal server error response
+        return Response(serializer.errors, status=400)
+
+
+
+#NOTE: One can also implement a view to return User data, with isAuthenticated permission class and with a normal ModelSerializer
+
+
+

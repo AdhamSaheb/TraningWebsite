@@ -50,15 +50,32 @@ urlpatterns = [
 
 
     #testing the function based api view for a list of objects
-    path('api/songlistgeneral/',views.song_list_general,name="Songlistgeneral"),
+    path('api/song-list-general/',views.song_list_general,name="song-list-general"),
 
     #testing the functin based api view for a single object
-    path('api/songdetail/'+"<int:pk>",views.song_detail,name="SongDetail"),
+    path('api/song-detail-general/'+"<int:pk>",views.song_detail,name="song-detail-general"),
 
 
     #testing class based API views
-    path('api/songlistapiview/',views.SongAPIView.as_view(),name='songlistapiview'),
+    path('api/song-list-apiview/',views.SongAPIView.as_view(),name='song-list-apiview'),
     #testing class based API views for detail
-    path('api/songdetailapiview/'+'<int:pk>',views.SongDetailAPIView.as_view(),name='songdetailapiview')
+    path('api/song-detail-apiview/'+'<int:pk>',views.SongDetailAPIView.as_view(),name='song-detail-apiview'),
+
+
+    #testing class based API views (Mixins)
+    path('api/song-list-mixin/',views.SongListMixin.as_view(),name='song-list-mixin'),
+    #testing class based API views for detail (Mixins)
+    path('api/song-detail-mixin/'+'<int:pk>',views.SongDetailMixin.as_view(),name='song-detail-mixin'),
+
+    #testing class based API views (Generic)
+    path('api/song-list-generic/',views.SongListGeneric.as_view(),name='song-list-generic'),
+    #testing class based API views for detail (Mixins)
+    path('api/song-detail-generic/'+'<int:pk>',views.SongDetailGeneric.as_view(),name='song-detail-generic'),
+
+    #Register API
+    path('api/register',views.RegisterAPI.as_view(),name='user-register'),
+
+    #Login API
+    path('api/login',views.LoginAPI.as_view(),name='user-login')
 
 ]

@@ -32,18 +32,6 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
-    #'myapp.apps.MyappConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'myapp',
-    'rest_framework',
-    'rest_framework.authtoken'
-]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +42,22 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+INSTALLED_APPS = [
+    #'myapp.apps.MyappConfig',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myapp',
+    'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_extensions'
+]
+
 
 ROOT_URLCONF = 'mywebsite.urls'
 
@@ -129,5 +133,25 @@ STATIC_ROOT = 'myapp/static'
 MEDIA_ROOT= os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
+#I had to override this so that all views with login required decorator redirect here instead of the default one
 LOGIN_URL = reverse_lazy('myapp:login')
+
+#If the lines down below are un-commented, all the views will require the mentioned types of authentication
+REST_FRAMEWORK = {
+
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.BasicAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
+    #
+    # ],
+    # 'DEFAULT_PERMISSION_CLASSES' :[
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+
+    #default pagination will apply to all generic api views
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+
+    #'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+ }
+
